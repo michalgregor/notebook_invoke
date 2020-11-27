@@ -1,4 +1,5 @@
 import json
+import numpy as np
 
 class NumpyEncoder(json.JSONEncoder):
     """ Custom encoder for numpy data types """

@@ -45,6 +45,21 @@ except ModuleNotFoundError:
         return json.dumps(ret, cls=NumpyEncoder)
         
     jupyter_javascript_routines = r"""
+    function handle_io(response) {
+        if(response.msg_type == "stream" &&
+            response.content.name == "stdout")
+        {
+            element.append("<pre>" + response.content.text + "</pre>");
+        }
+
+        if(response.msg_type == "error")
+        {
+            element.append("<pre>" + response.content.evalue + "</pre>");
+        }
+    }
+
+    Jupyter.notebook.kernel.execute('from notebook_invoke import invoke_wrapper as _jupyter_invoke_wrapper', {iopub: {output: handle_io}});
+
     function invoke_function(func, args, kwargs) {
         return new Promise((resolve, reject) => {
             function handle_output(response) {
@@ -68,7 +83,7 @@ except ModuleNotFoundError:
             }
 
             Jupyter.notebook.kernel.execute(
-                `invoke_wrapper('${func}', '${JSON.stringify(args)}', '${JSON.stringify(kwargs)}')`,
+                `_jupyter_invoke_wrapper('${func}', '${JSON.stringify(args)}', '${JSON.stringify(kwargs)}')`,
                 {iopub: {output: handle_output}},
                 {silent: false, store_history: false, stop_on_error: true}
             );

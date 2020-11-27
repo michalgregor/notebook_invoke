@@ -46,15 +46,12 @@ except ModuleNotFoundError:
         
     jupyter_javascript_routines = r"""
     function handle_io(response) {
-        if(response.msg_type == "stream" &&
-            response.content.name == "stdout")
-        {
+        if(response.msg_type == "stream") {
             element.append("<pre>" + response.content.text + "</pre>");
-        }
-
-        if(response.msg_type == "error")
-        {
+        } else if(response.msg_type == "error") {
             element.append("<pre>" + response.content.evalue + "</pre>");
+        } else {
+            console.log(response);
         }
     }
 
@@ -63,22 +60,17 @@ except ModuleNotFoundError:
     function invoke_function(func, args, kwargs) {
         return new Promise((resolve, reject) => {
             function handle_output(response) {
-                if(response.msg_type == "stream" &&
-                   response.content.name == "stdout")
-                {
+                if(response.msg_type == "stream") {
                     element.append("<pre>" + response.content.text + "</pre>");
-                }
-
-                if(response.msg_type == "error")
-                {
+                } else if(response.msg_type == "error") {
                     element.append("<pre>" + response.content.evalue + "</pre>");
-                }
-
-                if(response.msg_type == "execute_result") {
+                } else if(response.msg_type == "execute_result") {
                     var output = response.content.data["text/plain"];
                     output = output.substring(1, output.length-1).replace("\\'","'");
                     var data = JSON.parse(output);
                     resolve(data);
+                } else {
+                    console.log(response);
                 }
             }
 

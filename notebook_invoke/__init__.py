@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 VERSION = "0.1"
 
-from .invoke_function import (
+from .invoke_py import (
     register_callback,
+    remove_callback,
     jupyter_javascript_routines,
     invoke_wrapper
 )
+

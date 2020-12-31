@@ -5,8 +5,9 @@ from .invoke_py import (
     remove_callback, jupyter_javascript_routines
 )
 from IPython.display import display, Javascript
-from IPython.core.magic import cell_magic, needs_local_scope, magics_class, Magics
+from IPython.core.magic import cell_magic, magics_class, Magics
 from IPython import get_ipython
+import re
 
 def args2js(args):
     if not isinstance(args, list):
@@ -17,14 +18,29 @@ def args2js(args):
 
     return str_args
 
+_re_as_name = re.compile("as ([^\d\W]\w*):?\Z")
+
 @magics_class
 class MakeInvokeMagics(Magics):
     @cell_magic
-    @needs_local_scope
-    def make_invoke_context(self, line, cell, local_ns=None):
-        with InvokeJsContext() as invoke_context:
-            local_ns['invoke_context'] = invoke_context
+    def make_invoke_context(self, line, cell):
+        ctx = InvokeJsContext()
+        ctx_name = None
+
+        if line.strip() != '':
+            m = _re_as_name.fullmatch(line)
+
+            if m is None:
+                raise ValueError("Line '{}' not recognized in magic 'make_invoke_context'.".format(line))
+            else:
+                ctx_name = m.group(1)
+                self.shell.user_ns[ctx_name] = ctx
+
+        with ctx:
             exec(cell, self.shell.user_ns)
+
+        if not ctx_name is None:
+            del self.shell.user_ns[ctx_name]
 
 get_ipython().register_magics(MakeInvokeMagics)
 

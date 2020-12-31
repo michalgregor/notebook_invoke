@@ -160,12 +160,12 @@ else:
 
             register_callback(
                 "_invoke_submit_results_" + self.id,
-                self.submit_return
+                self._submit_return
             )
 
             self.display = display(display_id="_jupyter_invoke_disp_" + self.id)
 
-        def submit_return(self, ret):
+        def _submit_return(self, ret):
             self._ret = ret
             self._returned = True
 

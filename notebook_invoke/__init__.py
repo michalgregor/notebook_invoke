@@ -9,4 +9,4 @@ from .invoke_py import (
     invoke_wrapper
 )
 
-from .invoke_js import CaptureExecution, InvokeJsContext, exec_js
+from .invoke_js import CaptureExecution, InvokeJsContext, exec_js, args2js

@@ -18,6 +18,20 @@ def args2js(args):
 
     return str_args
 
+_exec_js_display = display(display_id=True)
+
+def exec_js(expr, args=None):
+    """
+    Execute javascript asynchronously without capturing the return value.
+    """
+
+    if args is None:
+        str_args = ''
+    else:
+        str_args = '(' + args2js(args) + ')'
+
+    _exec_js_display.update(Javascript(expr + str_args))
+
 _re_as_name = re.compile("as ([^\d\W]\w*):?\Z")
 
 @magics_class

@@ -42,7 +42,9 @@ class MakeInvokeMagics(Magics):
         if not ctx_name is None:
             del self.shell.user_ns[ctx_name]
 
-get_ipython().register_magics(MakeInvokeMagics)
+ipython = get_ipython()
+if ipython:
+    ipython.register_magics(MakeInvokeMagics)
 
 # Class taken from https://github.com/kafonek/ipython_blocking (BSD-3)
 # with slight modifications.
